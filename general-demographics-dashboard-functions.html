@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="video-dashboard-functions.html">
-<link rel="next" href="general-demographics-dashboard-functions.html">
+<link rel="prev" href="demographics-overview.html">
+<link rel="next" href="forum-overview.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -223,45 +223,406 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="demographics-overview" class="section level1">
-<h1><span class="header-section-number">4</span> Demographics Overview</h1>
-<div id="data-cleaning-pipeline-1" class="section level2">
-<h2><span class="header-section-number">4.1</span> Data Cleaning Pipeline</h2>
-<div class="figure">
-<img src="img/demographics_pipeline.png" />
+<div id="general-demographics-dashboard-functions" class="section level1">
+<h1><span class="header-section-number">5</span> General Demographics Dashboard Functions</h1>
+<div id="wrangling-functions-1" class="section level2">
+<h2><span class="header-section-number">5.1</span> Wrangling Functions</h2>
+<div id="wrangle_general" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> wrangle_general</h3>
+<div id="main-documentation-21" class="section level4">
+<h4><span class="header-section-number">5.1.1.1</span> Main Documentation</h4>
+<pre><code>Wrangles raw general demographics data
+
+Description:
+
+     Reads the input course&#39;s raw &quot;generalized_demographics.csv&quot; and
+     outputs a cleaned version as wrangled_demographics.csv within the
+     same directory
+
+Usage:
+
+     wrangle_general(input_course)
+     
+Arguments:
+
+input_course: String value of input course short name
+
+Value:
+
+     No value is returned
+
+Examples:
+
+     wrangle_general(&quot;psyc1&quot;)
+     </code></pre>
+</div>
+</div>
+<div id="obtain_raw_general_data" class="section level3">
+<h3><span class="header-section-number">5.1.2</span> obtain_raw_general_data</h3>
+<div id="main-documentation-22" class="section level4">
+<h4><span class="header-section-number">5.1.2.1</span> Main Documentation</h4>
+<pre><code>Obtains raw general demographic data
+
+Description:
+
+     Obtains raw general demographic data
+
+Usage:
+
+     obtain_raw_general_data(input_course)
+     
+Arguments:
+
+input_course: String value of input course short name
+
+Value:
+
+     Returns a data frame with the raw general demographic data
+
+Examples:
+
+     obtain_raw_general_data(&quot;psyc1&quot;)
+     </code></pre>
+</div>
+</div>
+<div id="obtain_language_info" class="section level3">
+<h3><span class="header-section-number">5.1.3</span> obtain_language_info</h3>
+<div id="main-documentation-23" class="section level4">
+<h4><span class="header-section-number">5.1.3.1</span> Main Documentation</h4>
+<pre><code>Obtains a data frame with language information
+
+Description:
+
+     Reads in a .csv containing languages and their ISO code.
+
+Usage:
+
+     obtain_language_info()
+     
+Value:
+
+     Returns a data frame with languages and their corresponding ISO
+     codes
+
+Examples:
+
+     obtain_language_info()
+     </code></pre>
+</div>
+</div>
+<div id="obtain_country_info" class="section level3">
+<h3><span class="header-section-number">5.1.4</span> obtain_country_info</h3>
+<div id="main-documentation-24" class="section level4">
+<h4><span class="header-section-number">5.1.4.1</span> Main Documentation</h4>
+<pre><code>Obtains a data frame with countries and ISO codes of their associated
+languages
+
+Description:
+
+     Obtains a data frame with countries and ISO codes of their
+     associated languages
+
+Usage:
+
+     obtain_country_info()
+     
+Value:
+
+     Data frame with countries and their associated ISO language codes
+
+Examples:
+
+     obtain_country_info()
+     </code></pre>
+</div>
+</div>
+<div id="prepare_general_data" class="section level3">
+<h3><span class="header-section-number">5.1.5</span> prepare_general_data</h3>
+<div id="main-documentation-25" class="section level4">
+<h4><span class="header-section-number">5.1.5.1</span> Main Documentation</h4>
+<pre><code>Cleans raw demographic data
+
+Description:
+
+     Cleans raw demographic data
+
+Usage:
+
+     prepare_general_data(data, language_info, country_info)
+     
+Arguments:
+
+    data: Data frame containing student demographic information
+
+language_info: Data frame containing languages and their associated ISO
+          codes
+
+country_info: Data frame with countries and their associated languages
+          as ISO codes
+
+Value:
+
+     Cleaned data frame containing demographic information
+
+Examples:
+
+     prepare_general_data(obtain_raw_general_data(&quot;psyc1&quot;), language_info(), country_info())
+     </code></pre>
+</div>
+</div>
+<div id="write_general_data" class="section level3">
+<h3><span class="header-section-number">5.1.6</span> write_general_data</h3>
+<div id="main-documentation-26" class="section level4">
+<h4><span class="header-section-number">5.1.6.1</span> Main Documentation</h4>
+<pre><code>Writes cleaned demographic data frame as a .csv to the specified course
+
+Description:
+
+     Writes cleaned demographic data frame as a .csv to the specified
+     course
+
+Usage:
+
+     write_general_data(input_course, data)
+     
+Arguments:
+
+input_course: String value of course short name
+
+    data: The data frame containing cleaned demographic data
+
+Value:
+
+     No value is returned
+
+Examples:
+
+     write_general_data(&quot;psyc1&quot;, cleaned_demographic_data)
+     </code></pre>
+</div>
+</div>
+</div>
+<div id="server-functions-1" class="section level2">
+<h2><span class="header-section-number">5.2</span> Server Functions</h2>
+<div id="convert_loe" class="section level3">
+<h3><span class="header-section-number">5.2.1</span> convert_loe</h3>
+<div id="main-documentation-27" class="section level4">
+<h4><span class="header-section-number">5.2.1.1</span> Main Documentation</h4>
+<pre><code>Converts level of education code to explicit string
+
+Description:
+
+     Converts level of education code to explicit string
+
+Usage:
+
+     convert_loe(LoE)
+     
+Arguments:
+
+     LoE: String value of level of education code
+
+Value:
+
+     Returns explicit string value of level of education</code></pre>
+</div>
+</div>
+<div id="get_loe_df" class="section level3">
+<h3><span class="header-section-number">5.2.2</span> get_loe_df</h3>
+<div id="main-documentation-28" class="section level4">
+<h4><span class="header-section-number">5.2.2.1</span> Main Documentation</h4>
+<pre><code>Returns aggregated level of education data frame
+
+Description:
+
+     Returns aggregated level of education data frame
+
+Usage:
+
+     get_loe_df(data)
+     
+Arguments:
+
+    data: Data frame containing explicit level of education of students
+
+Value:
+
+     Data frame containing aggregated level of education</code></pre>
+</div>
+</div>
+<div id="get_loe_plot" class="section level3">
+<h3><span class="header-section-number">5.2.3</span> get_loe_plot</h3>
+<div id="main-documentation-29" class="section level4">
+<h4><span class="header-section-number">5.2.3.1</span> Main Documentation</h4>
+<pre><code>Returns plot with level of education of students
+
+Description:
+
+     Returns plot with level of education of students
+
+Usage:
+
+     get_loe_plot(loe_df)
+     
+Arguments:
+
+  loe_df: Data frame containing studentes aggregated by level of
+          education
+
+Value:
+
+     Returns a ggplot geom_bar object</code></pre>
+</div>
+</div>
+<div id="get_age_df" class="section level3">
+<h3><span class="header-section-number">5.2.4</span> get_age_df</h3>
+<div id="main-documentation-30" class="section level4">
+<h4><span class="header-section-number">5.2.4.1</span> Main Documentation</h4>
+<pre><code>Returns dataframe with student&#39;s ages
+
+Description:
+
+     Returns dataframe with student&#39;s ages
+
+Usage:
+
+     get_age_df(data)
+     
+Arguments:
+
+    data: Dataframe containing year of birth
+
+Value:
+
+     Returns a dataframe with student&#39;s ages</code></pre>
+</div>
+</div>
+<div id="get_age_plot" class="section level3">
+<h3><span class="header-section-number">5.2.5</span> get_age_plot</h3>
+<div id="main-documentation-31" class="section level4">
+<h4><span class="header-section-number">5.2.5.1</span> Main Documentation</h4>
+<pre><code>Returns histogram plot of student&#39;s age
+
+Description:
+
+     Returns histogram plot of student&#39;s age
+
+Usage:
+
+     get_age_plot(age_df)
+     
+Arguments:
+
+  age_df: Data frame containing age of students
+
+Value:
+
+     Returns a ggplot geom_histogram object</code></pre>
+</div>
+</div>
+<div id="get_top_country_df" class="section level3">
+<h3><span class="header-section-number">5.2.6</span> get_top_country_df</h3>
+<div id="main-documentation-32" class="section level4">
+<h4><span class="header-section-number">5.2.6.1</span> Main Documentation</h4>
+<pre><code>Returns country aggregated data frame
+
+Description:
+
+     Returns country aggregated data frame
+
+Usage:
+
+     get_top_country_df(data, top_selection)
+     
+Arguments:
+
+    data: Data frame containing students&#39; country
+
+top_selection: The number of countries to include in output data frame
+
+Value:
+
+     A data frame containing countries with the most number of students</code></pre>
+</div>
+</div>
+<div id="get_country_plot" class="section level3">
+<h3><span class="header-section-number">5.2.7</span> get_country_plot</h3>
+<div id="main-documentation-33" class="section level4">
+<h4><span class="header-section-number">5.2.7.1</span> Main Documentation</h4>
+<pre><code>Returns a plot containing student country distribution
+
+Description:
+
+     Returns a plot containing student country distribution
+
+Usage:
+
+     get_country_plot(country_df, top_selection)
+     
+Arguments:
+
+country_df: Data frame of students aggregated by country
+
+top_selection: The number of countries to include in the plot
+
+Value:
+
+     Returns a ggplot geom_bar object</code></pre>
+</div>
+</div>
+<div id="get_top_language_df" class="section level3">
+<h3><span class="header-section-number">5.2.8</span> get_top_language_df</h3>
+<div id="main-documentation-34" class="section level4">
+<h4><span class="header-section-number">5.2.8.1</span> Main Documentation</h4>
+<pre><code>Returns a language aggregated data frame
+
+Description:
+
+     Returns a language aggregated data frame
+
+Usage:
+
+     get_top_language_df(data, top_selection)
+     
+Arguments:
+
+    data: Data frame containing student language information
+
+top_selection: Number of languages to include within the data frame
+
+Value:
+
+     A data frame containing languages with the most number of students
+     who speak it</code></pre>
+</div>
+</div>
+<div id="get_language_plot" class="section level3">
+<h3><span class="header-section-number">5.2.9</span> get_language_plot</h3>
+<div id="main-documentation-35" class="section level4">
+<h4><span class="header-section-number">5.2.9.1</span> Main Documentation</h4>
+<pre><code>Returns plot of language aggregated information
+
+Description:
+
+     Returns plot of language aggregated information
+
+Usage:
+
+     get_language_plot(language_df, top_selection)
+     
+Arguments:
+
+language_df: Data frame with aggregated language information
+
+top_selection: Number of different languages to include within the plot
+
+Value:
+
+     Returns a plot languages with the most number of students who
+     speak it</code></pre>
 
 </div>
-<p>The figure above shows the data cleaning pipeline for demographics data. Raw student demographics data is initially stored in Google BigQuery. It is downloaded and cleaned programatically through the <code>populate_courses.py</code> script. Next, the cleaned <code>wrangle_demographics.csv</code> file is used to generate the video visualizations.</p>
-<p>It should be noted that the data obtained through the use of <code>generalized_demographics.sql</code> and <code>rbq.py</code> is not the entire dataset of students. Instead, only students with a known IP address are obtained. This was done because IP address is used to infer statistics such as country and language. Please see <code>generalized_demographics.sql</code> for details.</p>
 </div>
-<div id="visualization-reasoning-and-caveats-1" class="section level2">
-<h2><span class="header-section-number">4.2</span> Visualization Reasoning and Caveats:</h2>
-<div class="figure">
-<img src="img/final_dashboard_views/level_of_education.png" />
-
-</div>
-<p>The plot above shows the level of education of the students. This is obtained from the <code>LoE</code> variable within the <code>person_course</code> table found on Google BigQuery. In order to transform the level of education code to its actual human readable format such as “Doctorate” or “High School”, the function <code>convert_loe</code> is used. This function <strong>assumes</strong> that the codes of “<code>p</code>”, “<code>p_se</code>”, and “<code>p_oth</code>” all refer to PhD which translates to a level of education of “Doctorate” in the visualization above. This assumption may not be entirely correct but are based off of the options available on EdX account profiles:</p>
-<div class="figure">
-<img src="img/LoE.png" />
-
-</div>
-<div class="figure">
-<img src="img/final_dashboard_views/countries.png" />
-
-</div>
-<p>The plot above shows the top ten countries according to the number of students enrolled. Student’s country is inferred from their IP addresses within the variable <code>cc_by_ip</code>. This was done because the variable <code>countryLabel</code> available in the <code>person_course</code> BigQuery table is relatively sparse compared to <code>cc_by_ip</code>.</p>
-<div class="figure">
-<img src="img/final_dashboard_views/language.png" />
-
-</div>
-<p>The plot above shows the top ten languages according to the number of students that speak it. The students’ language is inferred from their country which is in turn, inferred from their IP address. This was done because the <code>language</code> variable within the <code>person_course</code> table in BigQuery was obtained through their modal video transcripts. The original <code>language</code> variable seemed very biased towards English and as a result, the the students’ language was chosen to be inferred from their country.</p>
-<div class="figure">
-<img src="img/final_dashboard_views/age.png" />
-
-</div>
-<p>The plot above shows the distribution of ages amongs the learners. It should be noted that all ages less than 5 and greater than 100 have been filtered out. This was done because their are often fake accounts that entered a year of birth such that their age would be 200 or greater. As a result, the histogram would be difficult to read. The thresholds of 5 and 100 can be adjusted through the constants <code>MIN_AGE</code> and <code>MAX_AGE</code> found within the <code>general_server.R</code> file.</p>
-<p><strong>Developer Note</strong>: The global constants should be transitioned into arguments passed into the <code>get_age_plot</code> function within the <code>general_server.R</code> file.</p>
-
 </div>
 </div>
             </section>
@@ -269,8 +630,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="video-dashboard-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="general-demographics-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="demographics-overview.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="forum-overview.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
