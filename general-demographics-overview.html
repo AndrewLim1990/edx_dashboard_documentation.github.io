@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="index.html">
-<link rel="next" href="video-dashboard-functions.html">
+<link rel="prev" href="video-dashboard-functions.html">
+<link rel="next" href="general-demographics-dashboard-functions.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -233,44 +233,44 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="video-overview" class="section level1">
-<h1><span class="header-section-number">2</span> Video Overview</h1>
-<div id="data-cleaning-pipeline" class="section level2">
-<h2><span class="header-section-number">2.1</span> Data Cleaning Pipeline</h2>
+<div id="general-demographics-overview" class="section level1">
+<h1><span class="header-section-number">4</span> General Demographics Overview</h1>
+<div id="data-cleaning-pipeline-1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Data Cleaning Pipeline</h2>
 <div class="figure">
-<img src="img/video_pipeline.png" />
+<img src="img/demographics_pipeline.png" />
 
 </div>
-<p>The figure above shows the data cleaning pipeline for video data. Raw tracklog and video data is initially stored in Google BigQuery. It is downloaded and cleaned programatically through the <code>populate_courses.py</code> script. Next, the cleaned <code>wrangled_video_heat.csv</code> file is used to generate the video visualizations.</p>
+<p>The figure above shows the data cleaning pipeline for demographics data. Raw student demographics data is initially stored in Google BigQuery. It is downloaded and cleaned programatically through the <code>populate_courses.py</code> script. Next, the cleaned <code>wrangle_demographics.csv</code> file is used to generate the video visualizations.</p>
+<p>It should be noted that the data obtained through the use of <code>generalized_demographics.sql</code> and <code>rbq.py</code> is not the entire dataset of students. Instead, only students with a known IP address are obtained. This was done because IP address is used to infer statistics such as country and language. Please see <code>generalized_demographics.sql</code> for details.</p>
 </div>
-<div id="visualization-reasoning-and-caveats" class="section level2">
-<h2><span class="header-section-number">2.2</span> Visualization Reasoning and Caveats:</h2>
+<div id="visualization-reasoning-and-caveats-1" class="section level2">
+<h2><span class="header-section-number">4.2</span> Visualization Reasoning and Caveats:</h2>
 <div class="figure">
-<img src="img/final_dashboard_views/how_long_video.png" />
+<img src="img/final_dashboard_views/level_of_education.png" />
 
 </div>
-<p>The main purpose of the plot shown above is to gain the trust of the instructor. Intuitively, we know that videos that occur later in the course are going to have less students because students are more likely drop the course. Additionally, this plot is a good introductory to the next plot. Initially, during usability testing, when showing the heat map plot below without showing the length of video plot above, instructors felt overwhelmed and had trouble interpretting the visualization.</p>
+<p>The plot above shows the level of education of the students. This is obtained from the <code>LoE</code> variable within the <code>person_course</code> table found on Google BigQuery. In order to transform the level of education code to its actual human readable format such as “Doctorate” or “High School”, the function <code>convert_loe</code> is used. This function <strong>assumes</strong> that the codes of “<code>p</code>”, “<code>p_se</code>”, and “<code>p_oth</code>” all refer to PhD which translates to a level of education of “Doctorate” in the visualization above. This assumption may not be entirely correct but are based off of the options available on EdX account profiles:</p>
 <div class="figure">
-<img src="img/final_dashboard_views/hot_spots.png" />
+<img src="img/LoE.png" />
 
 </div>
-<p>The heat map plot above shows which parts of the video are being viewed the most. The “watch rate” of each segment is calculated by the following equation:</p>
-<p><span class="math display">\[\text{Watch Rate} = (\frac{\text{Number of times a segment has been watched}}{\text{Number of unique students who have started the video}})\]</span> In the above calculation of the watch rate, the “number of times a segment has been watched” is the raw count regardless of uniqueness of the user. This means that is a new user watches a video segment twice, the “number of times a segment has been watched” will increase by two</p>
 <div class="figure">
-<img src="img/final_dashboard_views/up_until.png" />
+<img src="img/final_dashboard_views/countries.png" />
 
 </div>
-<p>The plot above was created as a request from usability testing. This shows the average maximum time that a users reach in a video. However, the diagram is slightly misleading. We are simply taking the <strong>maximum</strong> time that users reach in a video. We are not accounting for the fact that users max have skipped ahead in video time to achieved their maximum time in the video. This problem can be fixed relatively easily in future iterations.</p>
+<p>The plot above shows the top ten countries according to the number of students enrolled. Student’s country is inferred from their IP addresses within the variable <code>cc_by_ip</code>. This was done because the variable <code>countryLabel</code> available in the <code>person_course</code> BigQuery table is relatively sparse compared to <code>cc_by_ip</code>.</p>
 <div class="figure">
-<img src="img/final_dashboard_views/linear_model.png" />
+<img src="img/final_dashboard_views/language.png" />
 
 </div>
-<p>The plot above shows instructors which segments have abnormally high and low watch rates. It works by creating a linear model used to predict the watch rate of a given segment. The linear model is based on the video’s occurrence in the course as well as the segment’s position within the video. Once the predicted value has been calculated, segments with the highest and lowest residuals are highlighted.</p>
+<p>The plot above shows the top ten languages according to the number of students that speak it. The students’ language is inferred from their country which is in turn, inferred from their IP address. This was done because the <code>language</code> variable within the <code>person_course</code> table in BigQuery was obtained through their modal video transcripts. The original <code>language</code> variable seemed very biased towards English and as a result, the the students’ language was chosen to be inferred from their country.</p>
 <div class="figure">
-<img src="img/final_dashboard_views/summary_table.png" />
+<img src="img/final_dashboard_views/age.png" />
 
 </div>
-<p>The table above shows much of the information already displayed in the visualizations above. During usability testing, it was discovered that users often want to see the actual numbers as well as the visualiations.</p>
+<p>The plot above shows the distribution of ages amongs the learners. It should be noted that all ages less than 5 and greater than 100 have been filtered out. This was done because their are often fake accounts that entered a year of birth such that their age would be 200 or greater. As a result, the histogram would be difficult to read. The thresholds of 5 and 100 can be adjusted through the constants <code>MIN_AGE</code> and <code>MAX_AGE</code> found within the <code>general_server.R</code> file.</p>
+<p><strong>Developer Note</strong>: The global constants should be transitioned into arguments passed into the <code>get_age_plot</code> function within the <code>general_server.R</code> file.</p>
 
 </div>
 </div>
@@ -279,8 +279,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="video-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="video-dashboard-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="general-demographics-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
