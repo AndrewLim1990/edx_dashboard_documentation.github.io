@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="discussion-forum-dashboard-functions.html">
-<link rel="next" href="problem-dashboard-functions.html">
+<link rel="prev" href="link-and-page-dashboard-functions.html">
+<link rel="next" href="discussion-forum-dashboard-functions.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -327,47 +327,139 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="problem-overview" class="section level1">
-<h1><span class="header-section-number">10</span> Problem Overview</h1>
-<div id="data-cleaning-pipeline-4" class="section level2">
-<h2><span class="header-section-number">10.1</span> Data Cleaning Pipeline</h2>
-<p>There are two sources that problems draws from, the <code>xbundle.xml</code> found on Google Cloud Storage and Google BigQuery. Two SQL scripts are used to generate the data for the problems dashboard. The first, focused on multiple choice problems, retrieves data the <code>problem_analysis</code>, <code>course_problem</code> and and <code>person_course</code> tables. The second, focused on Open Response Assessments (ORAs), retrieves submission data from the event logs. Xbundle is used to look up questions and response strings from their IDs.</p>
-<p>The useful data in the Xbundle is extracted into JSON files by <code>xml_extraction.py.</code> The assessment data involves some regular expressions and is too slow to calculate oat run-time, so it is further processed by <code>wrangle_assessments.R</code>.</p>
-<div class="figure">
-<img src="img/yed_files/problems_pipeline.png" alt="Pipeline" />
-<p class="caption">Pipeline</p>
+<div id="discussion-forum-overview" class="section level1">
+<h1><span class="header-section-number">8</span> Discussion Forum Overview</h1>
+<div id="data-cleaning-pipeline-3" class="section level2">
+<h2><span class="header-section-number">8.1</span> Data Cleaning Pipeline</h2>
+<p>All of the forum data is available in BigQuery, but some of the relevant variables are in obscure files that are separate from the standard query tables. Below is a diagram of the pipeline for acquiring and processing the forum data:</p>
+<center>
+<img src="img/diagrams/forum_pipeline.png" />
+</center>
+<p>The python script <code>rbq.py</code> (<strong>R</strong>un <strong>B</strong>ig<strong>Q</strong>uery) calls three SQL scripts, which query from the BigQuery tables <code>person_course</code>, <code>forum</code>, and <code>forum_events</code>. <code>rbq.py</code> also pulls in <code>prod_analytics.json</code> and <code>xbundle.xml</code>. This results in five raw data files which are then stored on Azure:</p>
+<ul>
+<li><code>forum_posts.csv</code></li>
+<li><code>forum_views.csv</code></li>
+<li><code>forum_searches.csv</code></li>
+<li><code>prod_analytics.json</code></li>
+<li><code>xbundle.xml</code></li>
+</ul>
+<p>Each of these files passes through <code>wrangle_forum.R</code>, which results in five new files:</p>
+<ul>
+<li><code>wrangled_forum_posts.csv</code></li>
+<li><code>wrangled_forum_views.csv</code></li>
+<li><code>wrangled_forum_words.csv</code></li>
+<li><code>wrangled_forum_searches.csv</code></li>
+<li><code>wrangled_forum_elements.csv</code></li>
+</ul>
+<p>Each of these is then loaded into the edXviz dashboard.</p>
+<div id="hierarchy-of-the-discussion-forums" class="section level3">
+<h3><span class="header-section-number">8.1.1</span> Hierarchy of the Discussion Forums</h3>
+<p>One of the primary goals of the forum view of the edXviz dashboard is to assist the user in viewing student engagement at different levels of aggregation within the discussion forum’s hiearchy. The hierarchy is shown in the diagram below:</p>
+<center>
+<img src="img/diagrams/forum_hierarchy.png" />
+</center>
+<p>Within a given course, the highest level of the hierarchy is comprised of <em>categories</em>. These are often given titles such as “General Questions”, “Part 1”, or “Assignments”, although these are determined entirely by the instructor or course designer. Crucially, categories do not necessarily have a one-to-one correspondence with the modules of the course, and therefore their sequence may not have a temporal element.</p>
+<p>Some categories may have <em>subcategories</em>. If so, each of the discussion posts in that category will be associated with exactly one subcategory.</p>
+<p>There are two types of <em>Initial</em> posts: <em>Discussion</em> posts, and <em>Question</em> posts. These are determined by the user when they create the post; they must select a radio button before submitting. Initial posts, whether Discussion or Question, are also given titles, determined by the poster.</p>
+<p>After an Initial post has been created, users can create <em>Response</em> posts, each of which will be associated with exactly one Initial post. After a Response post has been created, users can create <em>Comment</em> posts, each of which will be associated with exactly one Response post.</p>
+</div>
+<div id="hierarchy-data-integrity-issues" class="section level3">
+<h3><span class="header-section-number">8.1.2</span> Hierarchy Data Integrity Issues</h3>
+<p>One of the main challenges of wrangling this data was that the variables and unique identifiers associated with each level of the hierarchy have different names, or are occasionally missing, in each of the relevant files. I’ve summarized these discrepancies in the table below.</p>
+<center>
+<img src="img/diagrams/forum_hierarchy_table.png" />
+</center>
+<p>The reason I join with the prod_analytics.json file is that it is the only one that has all the category and subcategory names. The reason I join with the xbundle.xml file is that it is the only one that has the correct ordering of categories/subcategories, as defined by the instructor.</p>
 </div>
 </div>
-<div id="the-structure-of-problems-and-assessments" class="section level2">
-<h2><span class="header-section-number">10.2</span> The Structure of Problems and Assessments</h2>
-<p>Currently, the problem dashboard only supports two types of problems: <code>choicegroup</code> and <code>checkboxgroup</code>. Both of these problems are multiple choice but <code>checkboxgroup</code> has several correct answers that must all be selected for full credit. Open Response Assessments can be evaluated by self, peer, or TA/instructor and can have an arbitrary number of items in it’s rubric. As an example, a programming assessment my assess the student on passing edge cases and code style.</p>
-<p>Assessments with only one item their rubric and multiple choice problems that have only correct responses are filtered out of the dashboard. Typically, these signal a survey question or ungraded self-reflection response.</p>
+<div id="visualization-reasoning-and-caveats-3" class="section level2">
+<h2><span class="header-section-number">8.2</span> Visualization Reasoning and Caveats</h2>
+<div id="filter-panel" class="section level3">
+<h3><span class="header-section-number">8.2.1</span> Filter panel</h3>
+<p>At the top of the forum view, like in all the views, there is a panel for filtering students:</p>
+<center>
+<img src="img/visualizations/forum/forum_filter.png" />
+</center>
+<p>The filter panel allows the user to subset the students according to three variables:</p>
+<ul>
+<li>Activity level (defined by the total time spent on the course website)</li>
+<li>Gender</li>
+<li>Registration Status (verified or audit)</li>
+</ul>
+<p>There is one other dropdown menu that affects the filtering: <em>Category</em>. This was placed in the main plot for easier navigation, especially in conjunction with the <em>Subcategory</em> dropdown, which only appears when a category has been selected.</p>
+<p>The forum filter panel also displays two numbers:</p>
+<ul>
+<li>Number of authors: the number of filtered individuals who have posted at least once in the discussion forum.</li>
+<li>Number of viewers: the number of filtered individuals who have viewed the discussion forum at least once.</li>
+</ul>
+<p>Authors and viewers are <em>not</em> disjunct groups. That is, if you are an author then you are probably a viewer (more on why “probably” below), but if you are a viewer then you are not necessarily an author.</p>
+<p>Another important note is that when a category is selected in the main plot, this will update the numbers displayed in the filter panel. But when a subcategory is selected, it will <em>not</em> update the numbers. This is by design; the intention is that the numbers in the filter panel show the totals for all the bars that appear in the main plot at any given moment, even if those bars are not selected.</p>
+<p>One final feature of the filter panel is the <em>Reset</em> button, which allows the user to quickly go back to all students and all categories. The only thing that the Reset button does not change is the variable on the x-axis of the barchart. The assumption is that instructors would mainly be using the Reset button to remove filter settings, not to change the variable of interest.</p>
 </div>
-<div id="visualization-reasoning-and-caveats-4" class="section level2">
-<h2><span class="header-section-number">10.3</span> Visualization Reasoning and Caveats</h2>
-<div id="module-overview" class="section level3">
-<h3><span class="header-section-number">10.3.1</span> Module Overview</h3>
-<div class="figure">
-<img src="img/visualizations/problems/chapter_overview.png" />
-
+<div id="barchart" class="section level3">
+<h3><span class="header-section-number">8.2.2</span> Barchart</h3>
+<p>The purpose of the main barchart is twofold. First, it is to enable comparisons of engagement across forum categories and subcategories. This tells the instructor which categories are the most active. Second, it is to identify categories or subcategories that may be worth examining in greater detail, using the wordcloud or the forum threads table.</p>
+<p>The main barchart displays either categories or subcategories on the y-axis, and one of three variables on the x-axis, depending on the user’s selections. The default variable that is shown on the x-axis is the number of posts:</p>
+<center>
+<img src="img/visualizations/forum/post_counts_no_types.png" />
+</center>
+<p>The categories and subcategories are ordered by the layout that the instructor or course designer defined when writing the course XML. There was a time when there was a radio button for reordering the bars by their rank on the numeric variable on the x-axis, but through useability testing, we determined that most courses have two few categories, or subcategories per category, for this to be a useful enough feature to justify adding more clutter to the interface.</p>
+<p>If the user selects the checkbox that says “Show post types”, then the barchart becomes a stacked barchart, with each color representing a different post type:</p>
+<center>
+<img src="img/visualizations/forum/post_counts_with_types.png" />
+</center>
+<p>This is an important feature because it helps the user distinguish between categories or subcategories where the students are engaging with each other (indicated by a healthy mix of initial posts, responses, and comments) and categories or subcategories where students are simply writing into a void (indicated by a high number of initial posts, but few responses or comments).</p>
+<p>The barchart can also show the number of unique authors who have participated in each category or subcategory:</p>
+<center>
+<img src="img/visualizations/forum/author_counts.png" />
+</center>
+<p>This is included partly to give information that is isomorphic to the information that is provided in the Eiffel Tower plot, and partly to help instructors distinguish between categories or subcategories where many <em>students</em> are participating, and categories or subcategories where there is lots of <em>participation</em> but few students are responsible for it. On this note, one idea for another variable option for the x-axis would be posts per student (who posted at least once in that category or subcategory). This would tell the instructor which categories or subcategories are especially conducive to multiple posts by a given student. This additional option would not be difficult to implement.</p>
+<p>Finally, the barchart can show the number of views in each category or subcategory.</p>
+<center>
+<img src="img/visualizations/forum/view_counts.png" />
+</center>
+<p>This option is included because many students are active readers of the discussion forums, but rarely write posts themselves.</p>
+<p>A view is defined as a pageview of an initial post. So, the view will only be recorded if the user has clicked on one of the initial posts whose titles are listed on the left-hand side of the edX discussion forum (circa June 2017). In BigQuery, this event is defined as <code>forum_action</code> = <code>read</code> in the <code>forum_events</code> table, where <code>thread_id</code> matches the <code>mongoid</code> of either a discussion post or question post in the <code>forum_posts</code> table. Currently, it is not possible to track views of specific responses or comments.</p>
+<p>There is another type of view event listed in BigQuery, which is deliberately ignored in the edX dashboard. These are events when the user views the titles of the initial posts in a given subcategory, but has not yet clicked on one. In BigQuery, this event is defined as <code>forum_action</code> = <code>read_inline</code> in the <code>forum_events</code> table. For future reference, is possible to identify the subcategory the student is browsing in because <code>subject</code> in the <code>forum_events</code> table matches <code>commentable_id</code> in the <code>forum_posts</code> table, and <code>discussion_id</code> in <code>prod_analytics.json</code>.</p>
 </div>
-<p>The goal of the module overview is to provide the instructor with data on the difficulty curve of the entire course. All questions in each module are scored out of 100 and averaged. Note that the relative weights of the problems are not included. The modules appear in the same order as in the XML. The XML also dictates the name of the modules. Sometimes malformed XML can lead to sub-optimal module names.</p>
+<div id="wordcloud" class="section level3">
+<h3><span class="header-section-number">8.2.3</span> Wordcloud</h3>
+<p>When the instructor goes to the discussion forum itself, they have no way of getting a high-level picture of the topics being discussed in their course. This is the goal of the wordcloud, which shows the most-used words at whichever level of aggregation the user has selected:</p>
+<center>
+<img src="img/visualizations/forum/wordcloud.png" />
+</center>
+<p>For example, if all categories are selected, then the wordcloud shows the most-used words (written by the filtered students) in the whole course. If a category is selected, the wordcloud shows the most-used words for that category. Likewise, if a subcategory is selected, the wordcloud shows the most-used words for that subcategory.</p>
 </div>
-<div id="hardest-problems" class="section level3">
-<h3><span class="header-section-number">10.3.2</span> Hardest Problems</h3>
-<div class="figure">
-<img src="img/visualizations/problems/three_hardest_questions.png" />
-
+<div id="threads-table" class="section level3">
+<h3><span class="header-section-number">8.2.4</span> Threads Table</h3>
+<p>By default, the threads table shows the most-viewed initial posts for whatever level of aggregation the user has selected. The user can reorder by the number of responses or comments, if they like, and they can also search for specific users, subcategories, or words. This table is included so that the user can obtain details on demand, i.e. drill down even further than the selected subcategories in the barchart. This also allows for verification of the post type counts shown in the stacked barchart, as well as verification of the wordcloud. (However, the wordcloud shows words from responses and comments as well, which are not included in the threads table. This could be easily changed, if it is desired.) Finally, the threads table provides context for the words that show up in the wordcloud.</p>
+<center>
+<img src="img/visualizations/forum/forum_threads.png" />
+</center>
 </div>
-<p>The three hardest problems intend to show the hardest problems (ordered hardest to least hard) and the response of each student. The aim of this plot is show not only show which problems students are struggling on, but also why they might be struggling. This plot works especially well with the module filter, since it allows the instructor to drill-down to the toughest problems for each module.</p>
+<div id="searches-table" class="section level3">
+<h3><span class="header-section-number">8.2.5</span> Searches Table</h3>
+<p>The edX discussion forum has a search bar, which allows users to look up keywords of interest. This data is tracked, and could be useful to instructors, as it likely correlates with questions or interests that students have. The searches table ranks terms by the number of unique users who have searched for them.</p>
+<center>
+<img src="img/visualizations/forum/forum_searches.png" />
+</center>
+<p>The searches table, like all the other elements of the forum view, is updated when the user changes the settings in the filter panel. This allows the instructor to figure out, for example, what verified students are searching for.</p>
 </div>
-<div id="assessments" class="section level3">
-<h3><span class="header-section-number">10.3.3</span> Assessments</h3>
-<div class="figure">
-<img src="img/visualizations/problems/assessments.png" />
-
-</div>
-<p>The assessments plot is a new feature to the EdX dashboard. It allows the instructor to see not only how students did on ORAs but also how they did in different subcategories. Note that unlike the multiple choice questions, 100% grades are allowed for assessments.</p>
+<div id="interactivity-and-navigation" class="section level3">
+<h3><span class="header-section-number">8.2.6</span> Interactivity and Navigation</h3>
+<p>Aside from the filter panel, the user has four options for interacting with the forum view of the dashboard. The first is the x-axis variable. The second is the checkbox, “Show post types”, which only appears if the x-axis variable is “Posts”. When this checkbox is selected and all categories are selected, the full main view of the dashboard should look like this:</p>
+<center>
+<img src="img/visualizations/forum/forum_main_all_categories.png" />
+</center>
+<p>The third option for interactivity is Category dropdown menu. When a user selects a category, the barchart will show one bar for each subcategory in the selected category. Also, a new dropdown menu will appear — the fourth option for interactivity — which allows the user to select a subcategory:</p>
+<center>
+<img src="img/visualizations/forum/forum_main_category_selected.png" />
+</center>
+<p>When the user does select a subcategory, the transparency of the unselected bars will be diminished, like so:</p>
+<center>
+<img src="img/visualizations/forum/forum_main_subcategory_selected.png" />
+</center>
+<p>The titles and subtitles of the barplot, wordcloud, and threads table will also be updated to reflect the user’s selections.These small changes help to keep the user mentally situated at whichever level of the hierarchy they have chosen to view information.</p>
 
 </div>
 </div>
@@ -377,8 +469,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="discussion-forum-dashboard-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="problem-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="link-and-page-dashboard-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="discussion-forum-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
