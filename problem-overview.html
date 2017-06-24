@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="engagement-overview-dashboard-overview.html">
+<link rel="prev" href="forum-dashboard-functions.html">
+<link rel="next" href="problem-dashboard-functions.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -321,25 +321,58 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<h4 class="author"><em>Matt Emery, David Laing, Andrew Lim, Subi Zhang</em></h4>
-<h4 class="date"><em>2017-06-23</em></h4>
+<div id="problem-overview" class="section level1">
+<h1><span class="header-section-number">10</span> Problem Overview</h1>
+<div id="data-cleaning-pipeline-4" class="section level2">
+<h2><span class="header-section-number">10.1</span> Data Cleaning Pipeline</h2>
+<p>There are two sources that problems draws from, the <code>xbundle.xml</code> found on Google Cloud Storage and Google BigQuery. Two SQL scripts are used to generate the data for the problems dashboard. The first, focused on multiple choice problems, retrieves data the <code>problem_analysis</code>, <code>course_problem</code> and and <code>person_course</code> tables. The second, focused on Open Response Assessments (ORAs), retrieves submission data from the event logs. Xbundle is used to look up questions and response strings from their IDs.</p>
+<p>The useful data in the Xbundle is extracted into JSON files by <code>xml_extraction.py.</code> The assessment data involves some regular expressions and is too slow to calculate oat run-time, so it is further processed by <code>wrangle_assessments.R</code>.</p>
+<div class="figure">
+<img src="img/yed_files/problems_pipeline.png" alt="Pipeline" />
+<p class="caption">Pipeline</p>
 </div>
-<div id="edxviz-interactive-visualization-of-student-engagement-with-edx-moocs" class="section level1">
-<h1><span class="header-section-number">1</span> edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<p>Capstone project for the Master of Data Science program at the University of British Columbia.</p>
-<p>To create this document, navigate to the notebook directory in R, and run the following code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bookdown::<span class="kw">render_book</span>(<span class="st">&#39;index.Rmd&#39;</span>, <span class="st">&#39;all&#39;</span>)</code></pre></div>
+</div>
+<div id="the-structure-of-problems-and-assessments" class="section level2">
+<h2><span class="header-section-number">10.2</span> The Structure of Problems and Assessments</h2>
+<p>Currently, the problem dashboard only supports two types of problems: <code>choicegroup</code> and <code>checkboxgroup</code>. Both of these problems are multiple choice but <code>checkboxgroup</code> has several correct answers that must all be selected for full credit. Open Response Assessments can be evaluated by self, peer, or TA/instructor and can have an arbitrary number of items in it’s rubric. As an example, a programming assessment my assess the student on passing edge cases and code style.</p>
+<p>Assessments with only one item their rubric and multiple choice problems that have only correct responses are filtered out of the dashboard. Typically, these signal a survey question or ungraded self-reflection response.</p>
+</div>
+<div id="visualization-reasoning-and-caveats-4" class="section level2">
+<h2><span class="header-section-number">10.3</span> Visualization Reasoning and Caveats</h2>
+<div id="module-overview" class="section level3">
+<h3><span class="header-section-number">10.3.1</span> Module Overview</h3>
+<div class="figure">
+<img src="img/visualizations/problems/chapter_overview.png" />
 
+</div>
+<p>The goal of the module overview is to provide the instructor with data on the difficulty curve of the entire course. All questions in each module are scored out of 100 and averaged. Note that the relative weights of the problems are not included. The modules appear in the same order as in the XML. The XML also dictates the name of the modules. Sometimes malformed XML can lead to sub-optimal module names.</p>
+</div>
+<div id="hardest-problems" class="section level3">
+<h3><span class="header-section-number">10.3.2</span> Hardest Problems</h3>
+<div class="figure">
+<img src="img/visualizations/problems/three_hardest_questions.png" />
+
+</div>
+<p>The three hardest problems intend to show the hardest problems (ordered hardest to least hard) and the response of each student. The aim of this plot is show not only show which problems students are struggling on, but also why they might be struggling. This plot works especially well with the module filter, since it allows the instructor to drill-down to the toughest problems for each module.</p>
+</div>
+<div id="assessments" class="section level3">
+<h3><span class="header-section-number">10.3.3</span> Assessments</h3>
+<div class="figure">
+<img src="img/visualizations/problems/assessments.png" />
+
+</div>
+<p>The assessments plot is a new feature to the EdX dashboard. It allows the instructor to see not only how students did on ORAs but also how they did in different subcategories. Note that unlike the multiple choice questions, 100% grades are allowed for assessments.</p>
+
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="engagement-overview-dashboard-overview.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="forum-dashboard-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="problem-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

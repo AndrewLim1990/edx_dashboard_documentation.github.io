@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="engagement-overview-dashboard-overview.html">
+<link rel="prev" href="link-and-page-dashboard-overview.html">
+<link rel="next" href="forum-overview.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -321,25 +321,495 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<h4 class="author"><em>Matt Emery, David Laing, Andrew Lim, Subi Zhang</em></h4>
-<h4 class="date"><em>2017-06-23</em></h4>
-</div>
-<div id="edxviz-interactive-visualization-of-student-engagement-with-edx-moocs" class="section level1">
-<h1><span class="header-section-number">1</span> edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<p>Capstone project for the Master of Data Science program at the University of British Columbia.</p>
-<p>To create this document, navigate to the notebook directory in R, and run the following code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bookdown::<span class="kw">render_book</span>(<span class="st">&#39;index.Rmd&#39;</span>, <span class="st">&#39;all&#39;</span>)</code></pre></div>
+<div id="link-and-page-dashboard-functions" class="section level1">
+<h1><span class="header-section-number">7</span> Link and Page Dashboard Functions</h1>
+<div id="wrangling-functions-2" class="section level2">
+<h2><span class="header-section-number">7.1</span> Wrangling Functions</h2>
+<div id="read_course_axis" class="section level3">
+<h3><span class="header-section-number">7.1.1</span> read_course_axis</h3>
+<pre><code>Import course_axis.csv files based on specified course folder name
 
+Description:
+
+     Import course_axis.csv files based on specified course folder name
+
+Usage:
+
+     read_course_axis(input_course)
+     
+Arguments:
+
+input_course:
+
+Value:
+
+     course_axis
+
+Examples:
+
+     read_course_axis(input_couse = &quot;psyc1&quot;)
+     </code></pre>
+</div>
+<div id="read_link_dirt" class="section level3">
+<h3><span class="header-section-number">7.1.2</span> read_link_dirt</h3>
+<pre><code>Import external_link_dirt.csv files based on specified course folder
+name
+
+Description:
+
+     Import external_link_dirt.csv files based on specified course
+     folder name
+
+Usage:
+
+     read_link_dirt(input_course)
+     
+Arguments:
+
+input_course:
+
+Value:
+
+     link_dirt
+
+Examples:
+
+     read_link_dirt(input_couse = &quot;psyc1&quot;)
+     </code></pre>
+</div>
+<div id="hash_username" class="section level3">
+<h3><span class="header-section-number">7.1.3</span> hash_username</h3>
+<pre><code>Anonyanonymize the username column as hash strings in the input_df
+
+Description:
+
+     Anonyanonymize the username column as hash strings in the input_df
+
+Usage:
+
+     hash_username(input_df)
+     
+Arguments:
+
+input_df: A dataframe containing username column
+
+Value:
+
+     secure_df
+
+Examples:
+
+     hash_username(input_df = link_dat)
+     </code></pre>
+</div>
+<div id="set_activity_level" class="section level3">
+<h3><span class="header-section-number">7.1.4</span> set_activity_level</h3>
+<pre><code>Set three levels for students total spending time on course based on
+tracklog link data
+
+Description:
+
+     Set three levels for students total spending time on course based
+     on tracklog link data
+
+Usage:
+
+     set_activity_level(link_data)
+     
+Arguments:
+
+link_data: dataframe containing the information of student click any
+          links in the edx course
+
+Value:
+
+     link_data
+
+Examples:
+
+     set_activity_level(link_data = read_link_dirt)
+     </code></pre>
+</div>
+<div id="get_module_of_link" class="section level3">
+<h3><span class="header-section-number">7.1.5</span> get_module_of_link</h3>
+<pre><code>Get which module each external link locate based on link tracklog data
+and course axis data
+
+Description:
+
+     Get which module each external link locate based on link tracklog
+     data and course axis data
+
+Usage:
+
+     get_module_of_link(link_data, course_axis)
+     
+Arguments:
+
+link_data: dataframe containing the information of student click any
+          links in the edx course
+
+course_axis: dataframe containing all elements in the edx course
+
+Value:
+
+     link_data
+
+Examples:
+
+     get_module_of_link(link_data = set_activity_level, course_axis = read_course_axis)
+     </code></pre>
+</div>
+<div id="write_link_clean" class="section level3">
+<h3><span class="header-section-number">7.1.6</span> write_link_clean</h3>
+<pre><code>Export the tidy link dataframe
+
+Description:
+
+     Export the tidy link dataframe
+
+Usage:
+
+     write_link_clean(input_course, cleaned_data)
+     
+Arguments:
+
+input_course:
+
+cleaned_data: tidy link dataframe
+
+Examples:
+
+     write_link_clean(input_course = &quot;psyc1&quot;,cleaned_data = get_module_of_link)
+     </code></pre>
+</div>
+<div id="read_page_dirt" class="section level3">
+<h3><span class="header-section-number">7.1.7</span> read_page_dirt</h3>
+<pre><code>Import page_dirt.csv files from specified course folder name
+
+Description:
+
+     Import page_dirt.csv files from specified course folder name
+
+Usage:
+
+     read_page_dirt(input_course)
+     
+Arguments:
+
+input_course:
+
+Value:
+
+     page_dirt
+
+Examples:
+
+     read_page_dirt(input_couse = &quot;psyc1&quot;)
+     </code></pre>
+</div>
+<div id="prepare_tidy_page" class="section level3">
+<h3><span class="header-section-number">7.1.8</span> prepare_tidy_page</h3>
+<pre><code>Prepare tidy page tracklog data for making page summary table
+
+Description:
+
+     Prepare tidy page tracklog data for making page summary table
+
+Usage:
+
+     prepare_tidy_page(page_data)
+     
+Arguments:
+
+page_data:
+
+Value:
+
+     log_data
+
+Examples:
+
+     prepare_tidy_page(page_data = read_page_dirt)
+     </code></pre>
+</div>
+<div id="prepare_page_name" class="section level3">
+<h3><span class="header-section-number">7.1.9</span> prepare_page_name</h3>
+<pre><code>Get non-video and non-problem element name then create a chapter/module
+column for all these course elements
+
+Description:
+
+     Get non-video and non-problem element name then create a
+     chapter/module column for all these course elements
+
+Usage:
+
+     prepare_page_name(course_axis)
+     
+Arguments:
+
+course_axis: dataframe containing all course elements information
+
+Value:
+
+     page_name
+
+Examples:
+
+     prepare_page_name(course_axis =  read_course_axis)
+     </code></pre>
+</div>
+<div id="write_page_clean" class="section level3">
+<h3><span class="header-section-number">7.1.10</span> write_page_clean</h3>
+<pre><code>Export the tidy page dataframe
+
+Description:
+
+     Export the tidy page dataframe
+
+Usage:
+
+     write_page_clean(input_course, cleaned_data)
+     
+Arguments:
+
+input_course:
+
+cleaned_data: tidy page dataframe
+
+Examples:
+
+     write_page_clean(input_course = &quot;psyc1&quot;,cleaned_data = prepare_tidy_page)
+     </code></pre>
+</div>
+<div id="wrangle_link_page" class="section level3">
+<h3><span class="header-section-number">7.1.11</span> wrangle_link_page</h3>
+<pre><code>Read in three csv files getting from rbq.py : course_axis.csv,
+external_link_dirt.csv and page_dirt.csv; perform wrangling; export
+three csv files for building link_page_dashabord: external_link.csv,
+page.csv and page_name.csv
+
+Description:
+
+     Read in three csv files getting from rbq.py : course_axis.csv,
+     external_link_dirt.csv and page_dirt.csv; perform wrangling;
+     export three csv files for building link_page_dashabord:
+     external_link.csv, page.csv and page_name.csv
+
+Usage:
+
+     wrangle_link_page(input_course)
+     
+Arguments:
+
+input_course:
+
+Examples:
+
+     wrangle_link_page(input_cours = &quot;psyc1&quot;)
+     </code></pre>
+</div>
+</div>
+<div id="server-functions-2" class="section level2">
+<h2><span class="header-section-number">7.2</span> Server Functions</h2>
+<div id="filter_chapter_linkpage" class="section level3">
+<h3><span class="header-section-number">7.2.1</span> filter_chapter_linkpage</h3>
+<pre><code>Filter course item dataframe by the selected course module.
+
+Description:
+
+     Filter course item dataframe by the selected course module.
+
+Usage:
+
+     filter_chapter_linkpage(input_df, module = &quot;All&quot;)
+     
+Arguments:
+
+input_df: The link dataframe or page dataframe.
+
+  module: One of the modules in the course
+
+Value:
+
+     A dataframe filtered by the selected course module.
+
+Examples:
+
+     filter_chapter(tower_item, &quot;all&quot;)
+     </code></pre>
+</div>
+<div id="get_pageview" class="section level3">
+<h3><span class="header-section-number">7.2.2</span> get_pageview</h3>
+<pre><code>Count the pageview of each page.Here, we set a threshold for only
+counting pages have been viewed by more than certain amount of
+students.
+
+Description:
+
+     Count the pageview of each page.Here, we set a threshold for only
+     counting pages have been viewed by more than certain amount of
+     students.
+
+Usage:
+
+     get_pageview(filtered_log_df)
+     
+Arguments:
+
+filtered_log_df: A page related tracklog dataframe after filtering.
+
+Value:
+
+     page_student A page summary dataframe containing the pageview of
+     each pages.
+
+Examples:
+
+     get_pageview(filtered_log_df = log_dat)
+     </code></pre>
+</div>
+<div id="get_page_name" class="section level3">
+<h3><span class="header-section-number">7.2.3</span> get_page_name</h3>
+<pre><code>Get the name description of each page.
+
+Description:
+
+     Get the name description of each page.
+
+Usage:
+
+     get_page_name(page_name_df)
+     
+Arguments:
+
+page_name_df: A dataframe we get after joining page dataframe and page
+          name dataframe.
+
+Value:
+
+     each_page
+
+Examples:
+
+     get_page_name(page_name_df = page_name_mapping)
+     </code></pre>
+</div>
+<div id="get_unique_page_name" class="section level3">
+<h3><span class="header-section-number">7.2.4</span> get_unique_page_name</h3>
+<pre><code>Remove duplicated name for each page.
+
+Description:
+
+     Remove duplicated name for each page.
+
+Usage:
+
+     get_unique_page_name(each_page_df)
+     
+Arguments:
+
+each_page_df:
+
+Value:
+
+     all_pages
+
+Examples:
+
+     get_unique_page_name(each_page_df = each_page)
+     </code></pre>
+</div>
+<div id="creat_page_table" class="section level3">
+<h3><span class="header-section-number">7.2.5</span> creat_page_table</h3>
+<pre><code>create a page summary table to show page(name,clickable hyperlink) and
+its page view sorted by pageview in descending order
+
+Description:
+
+     create a page summary table to show page(name,clickable hyperlink)
+     and its page view sorted by pageview in descending order
+
+Usage:
+
+     creat_page_table(page_summary)
+     
+Arguments:
+
+page_summary:
+
+Value:
+
+     page_df
+
+Examples:
+
+     creat_page_table(page_summary = reactive_page())
+     </code></pre>
+</div>
+<div id="get_click_per_link" class="section level3">
+<h3><span class="header-section-number">7.2.6</span> get_click_per_link</h3>
+<pre><code>Compute how many times each external link have been clicked.
+
+Description:
+
+     Compute how many times each external link have been clicked.
+
+Usage:
+
+     get_click_per_link(link_df)
+     
+Arguments:
+
+ link_df: A link dataframe.
+
+Value:
+
+     link_num A link dataframe with number of click information.
+
+Examples:
+
+     get_click_per_link(link_df = link_dat)
+     </code></pre>
+</div>
+<div id="creat_link_table" class="section level3">
+<h3><span class="header-section-number">7.2.7</span> creat_link_table</h3>
+<pre><code>Create a page summary table to show page(name,clickable hyperlink) and
+its page view sorted by pageview in descending order
+
+Description:
+
+     Create a page summary table to show page(name,clickable hyperlink)
+     and its page view sorted by pageview in descending order
+
+Usage:
+
+     creat_link_table(link_summary)
+     
+Arguments:
+
+page_summary:
+
+Value:
+
+     page_df
+
+Examples:
+
+     creat_page_table(page_summary = reactive_page())
+     </code></pre>
+
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="engagement-overview-dashboard-overview.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="link-and-page-dashboard-overview.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="forum-overview.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

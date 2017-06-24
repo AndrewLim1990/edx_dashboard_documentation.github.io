@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="engagement-overview-dashboard-overview.html">
+<link rel="prev" href="problem-overview.html">
+<link rel="next" href="video-overview.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -321,25 +321,652 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<h4 class="author"><em>Matt Emery, David Laing, Andrew Lim, Subi Zhang</em></h4>
-<h4 class="date"><em>2017-06-23</em></h4>
-</div>
-<div id="edxviz-interactive-visualization-of-student-engagement-with-edx-moocs" class="section level1">
-<h1><span class="header-section-number">1</span> edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<p>Capstone project for the Master of Data Science program at the University of British Columbia.</p>
-<p>To create this document, navigate to the notebook directory in R, and run the following code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bookdown::<span class="kw">render_book</span>(<span class="st">&#39;index.Rmd&#39;</span>, <span class="st">&#39;all&#39;</span>)</code></pre></div>
+<div id="problem-dashboard-functions" class="section level1">
+<h1><span class="header-section-number">11</span> Problem Dashboard Functions</h1>
+<div id="assessment-functions" class="section level2">
+<h2><span class="header-section-number">11.1</span> Assessment Functions</h2>
+<div id="extract_assessment_json" class="section level3">
+<h3><span class="header-section-number">11.1.1</span> extract_assessment_json</h3>
+<div id="main-documentation-52" class="section level4">
+<h4><span class="header-section-number">11.1.1.1</span> Main Documentation</h4>
+<pre><code>Convert a JSON object into a tidyJSON dataframe
 
+Description:
+
+     Convert a JSON object into a tidyJSON dataframe
+
+Usage:
+
+     extract_assessment_json(assessment_json)
+     
+Arguments:
+
+assessment_json: An JSON file generated through `xml_extraction
+          &lt;course&gt; -assessments`
+
+Value:
+
+     A flattened dataframe with the columns `url_name`, `title`,
+     `label`, `name`</code></pre>
+</div>
+</div>
+<div id="extract_assessment_csv" class="section level3">
+<h3><span class="header-section-number">11.1.2</span> extract_assessment_csv</h3>
+<div id="main-documentation-53" class="section level4">
+<h4><span class="header-section-number">11.1.2.1</span> Main Documentation</h4>
+<pre><code>Convert a CSV respresenting an open_assessment.sql query into a usable
+format
+
+Description:
+
+     Extracts the nececessary information from event JSON and discards
+     it. Points possible should always be the same for each assessment.
+
+Usage:
+
+     extract_assessment_csv(assessment_tbl)
+     
+Arguments:
+
+assessment_tbl:
+
+Value:
+
+     An extracted table</code></pre>
+</div>
+</div>
+<div id="join_extracted_assessment_data" class="section level3">
+<h3><span class="header-section-number">11.1.3</span> join_extracted_assessment_data</h3>
+<div id="main-documentation-54" class="section level4">
+<h4><span class="header-section-number">11.1.3.1</span> Main Documentation</h4>
+<pre><code>Join the results of extract_assessment_csv and extract_assessment_json
+
+Description:
+
+     This function joins the BigQuery and XML data. This is needed to
+     populate the BigQuery data with the title and label fields. If the
+     ID of the assessment does not occur in the XML, it is removed
+     before preceding.
+
+Usage:
+
+     join_extracted_assessment_data(extracted_csv, extracted_json)
+     
+Arguments:
+
+extracted_csv: the result of extract_assessment_csv
+
+extracted_json: the result of extract_assessment_csv
+
+Value:
+
+     A joined dataframe of the two incoming dataframes</code></pre>
+</div>
+</div>
+<div id="summarise_joined_assessment_data" class="section level3">
+<h3><span class="header-section-number">11.1.4</span> summarise_joined_assessment_data</h3>
+<div id="main-documentation-55" class="section level4">
+<h4><span class="header-section-number">11.1.4.1</span> Main Documentation</h4>
+<pre><code>Summarise assessment data for plotting
+
+Description:
+
+     This function checks that the number of points possible does not
+     vary within title-label groups.
+
+Usage:
+
+     summarise_joined_assessment_data(joint_assessment, trunc_length = 20)
+     
+Arguments:
+
+joint_assessment: The result of join_extracted_assessment_data
+
+trunc_length: The length of that the label should be truncated to. Do
+          set to less than 4
+
+Value:
+
+     A summarised dataframe of the average scores in each area.</code></pre>
+</div>
+</div>
+<div id="plot_assessment" class="section level3">
+<h3><span class="header-section-number">11.1.5</span> plot_assessment</h3>
+<div id="main-documentation-56" class="section level4">
+<h4><span class="header-section-number">11.1.5.1</span> Main Documentation</h4>
+<pre><code>Plot the summary assessment data
+
+Description:
+
+     Plot the summary assessment data
+
+Usage:
+
+     plot_assessment(summary_assessment)
+     
+Arguments:
+
+summary_assessment: the resulting dataframe from `summary_assessment`
+
+Value:
+
+     A faceted bar plot</code></pre>
+</div>
+</div>
+</div>
+<div id="problems-functions" class="section level2">
+<h2><span class="header-section-number">11.2</span> Problems Functions</h2>
+<div id="clean_multiple_choice" class="section level3">
+<h3><span class="header-section-number">11.2.1</span> clean_multiple_choice</h3>
+<div id="main-documentation-57" class="section level4">
+<h4><span class="header-section-number">11.2.1.1</span> Main Documentation</h4>
+<pre><code>Clean a demographic multiple choice CSV
+
+Description:
+
+     This function cleans a CSV retrieved from the
+     `demographic_multiple_choice` SQL script. It transforms the
+     `sum_dt` column into activity_level. It also removes any
+     non-multiple choice problems.
+
+Usage:
+
+     clean_multiple_choice(raw_csv)
+     
+Arguments:
+
+raw_csv:: A dataframe from the read_csv
+
+Value:
+
+     A dataframe with the same dimensions as the CSV</code></pre>
+</div>
+</div>
+<div id="create_question_lookup_from_json" class="section level3">
+<h3><span class="header-section-number">11.2.2</span> create_question_lookup_from_json</h3>
+<div id="main-documentation-58" class="section level4">
+<h4><span class="header-section-number">11.2.2.1</span> Main Documentation</h4>
+<pre><code>Parse a JSON object and return it as a flat dataframe.
+
+Description:
+
+     This function is required to convert the JSON derived from the
+     xbundle XML into a format that other dataframes can interact with.
+
+Usage:
+
+     create_question_lookup_from_json(name_lookup)
+     
+Arguments:
+
+name_lookup: A JSON object contain keys for `id`, `problem`,
+          `chapter_name`, `chapter_name`, `choices`, `correct_id` and
+          `correct`
+
+Value:
+
+     A flat dataframe with the above columns</code></pre>
+</div>
+</div>
+<div id="filter_valid_questions" class="section level3">
+<h3><span class="header-section-number">11.2.3</span> filter_valid_questions</h3>
+<div id="main-documentation-59" class="section level4">
+<h4><span class="header-section-number">11.2.3.1</span> Main Documentation</h4>
+<pre><code>Filter out invalid multiple choice problems
+
+Description:
+
+     Removes problems that were marked as 100 problems where every
+     answer is correct). Also checks from the dataframe derived from
+     xbundle to ensure that the problem exists in the course.
+
+Usage:
+
+     filter_valid_questions(problems_tbl, lookup_table)
+     
+Arguments:
+
+problems_tbl: The result of `read_multiple_choice_csv`
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+Value:
+
+     The filtered problems_tbl</code></pre>
+</div>
+</div>
+<div id="get_mean_scores" class="section level3">
+<h3><span class="header-section-number">11.2.4</span> get_mean_scores</h3>
+<div id="main-documentation-60" class="section level4">
+<h4><span class="header-section-number">11.2.4.1</span> Main Documentation</h4>
+<pre><code>Get mean scores.
+
+Description:
+
+     This function is not affected by filters. If you need a function
+     that is, use `get_mean_scores_filterable`. Removes scores that do
+     not appear in the xbundle XML or have a 100 questions masquerading
+     as multiple choice problems.
+
+Usage:
+
+     get_mean_scores(problems_tbl, lookup_table)
+     
+Arguments:
+
+problems_tbl: The result of `clean_multiple_choice`
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+Value:
+
+     A dataframe with each problem, the number of users that attempted
+     the problem and the percent score</code></pre>
+</div>
+</div>
+<div id="tally_correct_answers" class="section level3">
+<h3><span class="header-section-number">11.2.5</span> tally_correct_answers</h3>
+<div id="main-documentation-61" class="section level4">
+<h4><span class="header-section-number">11.2.5.1</span> Main Documentation</h4>
+<pre><code>Count the number of correct answers for each question.
+
+Description:
+
+     Count the number of correct answers for each question.
+
+Usage:
+
+     tally_correct_answers(joined_scores)
+     
+Arguments:
+
+joined_scores: `problems_tbl` and `lookup_table` joined by `id` and
+          `item_response`
+
+Value:
+
+     A summarised dataframe of correct counts</code></pre>
+</div>
+</div>
+<div id="calculate_percent_correct_tbl" class="section level3">
+<h3><span class="header-section-number">11.2.6</span> calculate_percent_correct_tbl</h3>
+<div id="main-documentation-62" class="section level4">
+<h4><span class="header-section-number">11.2.6.1</span> Main Documentation</h4>
+<pre><code>Calculate the percent of correct answers
+
+Description:
+
+     Each row represents a problem.
+
+Usage:
+
+     calculate_percent_correct_tbl(joined_scores, number_correct)
+     
+Arguments:
+
+joined_scores: `problems_tbl` and `lookup_table` joined by `id` and
+          `item_response`
+
+number_correct: the result of `tally_correct_answer`
+
+Value:
+
+     A dataframe where each row is a row and the columns show the
+     percentage and absolute number of students that got the problem
+     correct.</code></pre>
+</div>
+</div>
+<div id="get_mean_scores_filterable" class="section level3">
+<h3><span class="header-section-number">11.2.7</span> get_mean_scores_filterable</h3>
+<div id="main-documentation-63" class="section level4">
+<h4><span class="header-section-number">11.2.7.1</span> Main Documentation</h4>
+<pre><code>A filterable version of get_mean_scores
+
+Description:
+
+     A filterable version of get_mean_scores
+
+Usage:
+
+     get_mean_scores_filterable(filtered_problems_tbl)
+     
+Arguments:
+
+filtered_problems_tbl: The result of `read_multiple_choice_csv`
+          filtered by demographics and chapter
+
+name_lookup: A JSON object contain keys for `id`, `problem`,
+          `chapter_name`, `chapter_name`, `choices`, `correct_id` and
+          `correct`
+
+Value:
+
+     A dataframe where each row is a row and the columns show the
+     percentage and absolute number of students that got the question
+     correct.</code></pre>
+</div>
+</div>
+<div id="join_summary_lookup" class="section level3">
+<h3><span class="header-section-number">11.2.8</span> join_summary_lookup</h3>
+<div id="main-documentation-64" class="section level4">
+<h4><span class="header-section-number">11.2.8.1</span> Main Documentation</h4>
+<pre><code>Join the summary and lookup tables
+
+Description:
+
+     Join the summary and lookup tables
+
+Usage:
+
+     join_summary_lookup(summarised_scores, lookup_table)
+     
+Arguments:
+
+summarised_scores: the result of `get_mean_scores_filterable`
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+Value:
+
+     The inner join of the two dataframes</code></pre>
+</div>
+</div>
+<div id="summarise_scores_by_chapter" class="section level3">
+<h3><span class="header-section-number">11.2.9</span> summarise_scores_by_chapter</h3>
+<div id="main-documentation-65" class="section level4">
+<h4><span class="header-section-number">11.2.9.1</span> Main Documentation</h4>
+<pre><code>Summarise scores by chapter
+
+Description:
+
+     Calculates the average score on problems for each of the chapters
+     based.
+
+Usage:
+
+     summarise_scores_by_chapter(summarised_scores, lookup_table)
+     
+Arguments:
+
+summarised_scores: the result of `get_mean_scores_filterable`
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+Value:
+
+     A dataframe where each row is a chapter that contains the average
+     score on that chapter</code></pre>
+</div>
+</div>
+<div id="prepare_filterable_problems" class="section level3">
+<h3><span class="header-section-number">11.2.10</span> prepare_filterable_problems</h3>
+<div id="main-documentation-66" class="section level4">
+<h4><span class="header-section-number">11.2.10.1</span> Main Documentation</h4>
+<pre><code>Produce a dataframe clean dataframe of all questions
+
+Description:
+
+     Returns the question name and it&#39;s rounded percentage (out of
+     100). This function is used to prepare the data table shown at the
+     bottom of the problem dashboard.
+
+Usage:
+
+     prepare_filterable_problems(summarised_scores, lookup_table)
+     
+Arguments:
+
+summarised_scores: the result of `get_mean_scores_filterable`
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+Value:
+
+     A dataframe with the question and percent correct.</code></pre>
+</div>
+</div>
+<div id="get_extreme_summarised_scores" class="section level3">
+<h3><span class="header-section-number">11.2.11</span> get_extreme_summarised_scores</h3>
+<div id="main-documentation-67" class="section level4">
+<h4><span class="header-section-number">11.2.11.1</span> Main Documentation</h4>
+<pre><code>Select the easiest (or hardest) problems
+
+Description:
+
+     Set the index negative to receive the hardest problems.
+
+Usage:
+
+     get_extreme_summarised_scores(summarised_scores, index)
+     
+Arguments:
+
+summarised_scores: the result of `get_mean_scores_filterable`
+
+   index: the number of questions you wish to view
+
+Value:
+
+     The summarised scores dataframe with the with the number of rows
+     equal to the absolute value of the index.</code></pre>
+</div>
+</div>
+<div id="join_problems_to_lookup" class="section level3">
+<h3><span class="header-section-number">11.2.12</span> join_problems_to_lookup</h3>
+<div id="main-documentation-68" class="section level4">
+<h4><span class="header-section-number">11.2.12.1</span> Main Documentation</h4>
+<pre><code>Left join extracted problems and lookup table
+
+Description:
+
+     Left join extracted problems and lookup table
+
+Usage:
+
+     join_problems_to_lookup(extracted_problems, lookup_table)
+     
+Arguments:
+
+extracted_problems: the result of `clean_multiple_choice`
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+Value:
+
+     The left joined dataframe by id and choice_id, filtering out blank
+     problems</code></pre>
+</div>
+</div>
+<div id="join_users_problems" class="section level3">
+<h3><span class="header-section-number">11.2.13</span> join_users_problems</h3>
+<div id="main-documentation-69" class="section level4">
+<h4><span class="header-section-number">11.2.13.1</span> Main Documentation</h4>
+<pre><code>The left join of joined problems and summarised scores
+
+Description:
+
+     The left join of joined problems and summarised scores
+
+Usage:
+
+     join_users_problems(joined_problems, summarised_scores)
+     
+Arguments:
+
+joined_problems: `problems_tbl` and `lookup_table` joined by `id` and
+          `item_response`
+
+summarised_scores: the result of `get_mean_scores_filterable`
+
+Value:
+
+     A left joined dataframe of joined problems and summarised scores</code></pre>
+</div>
+</div>
+<div id="filter_counts" class="section level3">
+<h3><span class="header-section-number">11.2.14</span> filter_counts</h3>
+<div id="main-documentation-70" class="section level4">
+<h4><span class="header-section-number">11.2.14.1</span> Main Documentation</h4>
+<pre><code>Count the number of filtered users for each problem
+
+Description:
+
+     Count the number of filtered users for each problem
+
+Usage:
+
+     filter_counts(joined_user_problems)
+     
+Arguments:
+
+joined_user_problems: The result of `join_users_problems`
+
+Value:
+
+     A dataframe with the count of unique users for each question</code></pre>
+</div>
+</div>
+<div id="filter_extreme_problem_choices" class="section level3">
+<h3><span class="header-section-number">11.2.15</span> filter_extreme_problem_choices</h3>
+<div id="main-documentation-71" class="section level4">
+<h4><span class="header-section-number">11.2.15.1</span> Main Documentation</h4>
+<pre><code>Retrieve the question and choice information from the extreme problems
+
+Description:
+
+     Retrieve the question and choice information from the extreme
+     problems
+
+Usage:
+
+     filter_extreme_problem_choices(lookup_table, extreme_problems, filtered_counts)
+     
+Arguments:
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+extreme_problems: The result of `get_extreme_summarised_score`
+
+filtered_counts: The result of `filter_counts`
+
+Value:
+
+     A dataframe with lookup information attached</code></pre>
+</div>
+</div>
+<div id="aggregate_extracted_problems" class="section level3">
+<h3><span class="header-section-number">11.2.16</span> aggregate_extracted_problems</h3>
+<div id="main-documentation-72" class="section level4">
+<h4><span class="header-section-number">11.2.16.1</span> Main Documentation</h4>
+<pre><code>Perform the last wrangling before plotting extreme problems
+
+Description:
+
+     Calculates the percent of students selected each option and
+     determines if that option is correct.
+
+Usage:
+
+     aggregate_extracted_problems(joined_user_problems, extreme_problems,
+       question_choices)
+     
+Arguments:
+
+joined_user_problems: The result of `join_users_problems`
+
+extreme_problems: The result of `get_extreme_summarised_score`
+
+question_choices: The result of `filter_extreme_problem_choices`
+
+Value:
+
+     A dataframe with `problem,` `choice` and percent `correct`</code></pre>
+</div>
+</div>
+<div id="aggregate_melted_problems" class="section level3">
+<h3><span class="header-section-number">11.2.17</span> aggregate_melted_problems</h3>
+<div id="main-documentation-73" class="section level4">
+<h4><span class="header-section-number">11.2.17.1</span> Main Documentation</h4>
+<pre><code>Aggregate questions before plotting
+
+Description:
+
+     Aggregate questions before plotting
+
+Usage:
+
+     aggregate_melted_problems(lookup_table, joined_user_problems, extreme_problems)
+     
+Arguments:
+
+lookup_table: The result of `create_question_lookup_from_json`
+
+joined_user_problems: The result of `join_users_problems`
+
+extreme_problems: The result of `get_extreme_summarised_score`
+
+Value:
+
+     A dataframe ready to be plotted by `plot_aggregated_problems`</code></pre>
+</div>
+</div>
+<div id="plot_aggregated_problems" class="section level3">
+<h3><span class="header-section-number">11.2.18</span> plot_aggregated_problems</h3>
+<div id="main-documentation-74" class="section level4">
+<h4><span class="header-section-number">11.2.18.1</span> Main Documentation</h4>
+<pre><code>Plot aggregated problems
+
+Description:
+
+     This funciton is used to plot the top or bottom questions.
+
+Usage:
+
+     plot_aggregated_problems(agg_melted_problems)
+     
+Arguments:
+
+agg_melted_problems: A dataframe with the problem and choice names as
+          well as the number of students who chose each option.
+
+Value:
+
+     A facetted ggplot bar chart</code></pre>
+</div>
+</div>
+<div id="plot_problem_chapter_summaries" class="section level3">
+<h3><span class="header-section-number">11.2.19</span> plot_problem_chapter_summaries</h3>
+<div id="main-documentation-75" class="section level4">
+<h4><span class="header-section-number">11.2.19.1</span> Main Documentation</h4>
+<pre><code>Overview plot (Chapter by Course)
+
+Description:
+
+     Overview plot (Chapter by Course)
+
+Usage:
+
+     plot_problem_chapter_summaries(chapter_summary_tbl)
+     
+Arguments:
+
+chapter_summary_tbl: The aggregated data on a per chapter basis
+
+Value:
+
+     A ggplot bar chart</code></pre>
+
+</div>
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="engagement-overview-dashboard-overview.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="problem-overview.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="video-overview.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

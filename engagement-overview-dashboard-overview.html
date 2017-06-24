@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="engagement-overview-dashboard-overview.html">
+<link rel="prev" href="index.html">
+<link rel="next" href="engagement-overview-dashboard-functions.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -321,25 +321,40 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<h4 class="author"><em>Matt Emery, David Laing, Andrew Lim, Subi Zhang</em></h4>
-<h4 class="date"><em>2017-06-23</em></h4>
-</div>
-<div id="edxviz-interactive-visualization-of-student-engagement-with-edx-moocs" class="section level1">
-<h1><span class="header-section-number">1</span> edXviz: Interactive Visualization of Student Engagement with edX MOOCs</h1>
-<p>Capstone project for the Master of Data Science program at the University of British Columbia.</p>
-<p>To create this document, navigate to the notebook directory in R, and run the following code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bookdown::<span class="kw">render_book</span>(<span class="st">&#39;index.Rmd&#39;</span>, <span class="st">&#39;all&#39;</span>)</code></pre></div>
+<div id="engagement-overview-dashboard-overview" class="section level1">
+<h1><span class="header-section-number">2</span> Engagement Overview Dashboard Overview</h1>
+<div id="data-cleaning-pipeline" class="section level2">
+<h2><span class="header-section-number">2.1</span> Data Cleaning Pipeline</h2>
+<div class="figure">
+<img src="img/diagrams/engagement_overview_pipeline.png" />
 
+</div>
+</div>
+<div id="visualization-reasoning-and-caveats" class="section level2">
+<h2><span class="header-section-number">2.2</span> Visualization Reasoning and Caveats</h2>
+<p>Since videos and problems are the two basic components in edX MOOC courses, instructors can get a general picture concerning student engagement by seeing how many students engaged with each video/problem.</p>
+<p>As a result, we designed this the plot below to show the relationship between course structure and engagement. Each horizontal bar is a course element (video, problem or module separator). These bars are arranged in such a way that matches its occurrence within the course. The length of each bar indicates how many student engaged with this course element.</p>
+<div class="figure">
+<img src="img/visualizations/overview/effiel_tower.png" />
+
+</div>
+<p>This visualization aims to help instructors finish four types of tasks:</p>
+<ul>
+<li><p>Obtain an intuitive sense about course structure. For example, instructors can explore which module are relatively excessive and contain an abnormally high amount of course elements.</p></li>
+<li><p>Identify where students drop out of the course.</p></li>
+<li><p>Locate videos and problems throughout the course by using module filtering</p></li>
+<li><p>Explore trends amongst the learners by applying different filtering options. For example, instructors may explore engagement differences between auditing and verified students.</p></li>
+</ul>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="engagement-overview-dashboard-overview.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="engagement-overview-dashboard-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
